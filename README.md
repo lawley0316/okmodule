@@ -8,8 +8,10 @@ pip install okmodule
 
 ## Usage
 
+### Module
+
 ```python
-from okmodule import Module, Command
+from okmodule import Module
 
 
 class MyModule(Module):
@@ -18,26 +20,33 @@ class MyModule(Module):
         self.y = y
         
     def main(self):
+        self.log(f'Calculating, x = {self.x}, y = {self.y}')
         return self.x + self.y
 
 
+result1 = MyModule(1, 2)()  # invoke directly
+my_module = MyModule(3, 4)  # create Module object
+result2 = my_module()  # invoke module
+```
+
+### Command
+
+```python
+from okmodule import Option, Flag, Command
+
+
 class Blastn(Command):
-    def __init__(self, query, db, out):
-        self.query = query
-        self.db = db
-        self.out = out
+    query = Option('-query')
+    db = Option('-db')
+    outfmt = Option('-outfmt')
+    num_threads = Option('-num_threads')
+    out = Option('-out')
+    help = Flag('-help')
 
-    def args(self):
-        return [
-            '-query', self.query,
-            '-db', self.db,
-            '-out', self.out
-        ]
+# show help message
+Blastn(help=True)()
 
-
-my_module = MyModule(1, 2)
-print(my_module())
-
-blastn = Blastn('foo', 'bar', 'baz')
+# invoke blastn
+blastn = Blastn(query='test/query.fa', db='test/db/test', outfmt=6, num_threads=6, out='test/result.txt')
 blastn()
 ```
