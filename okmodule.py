@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import re
 import logging
 import subprocess
 
@@ -67,10 +66,18 @@ class Command(Module):
             setattr(self, attr, value)
 
     def path(self):
-        return re.sub(r'(?!^)([A-Z]+)', r'-\1', self.name()).lower()  # MyCommand -> my-command
+        i = 0
+        path = []
+        name = self.name()
+        for j in range(1, len(name)):
+            if name[j].isupper():
+                path.append(name[i: j].lower())
+                i = j
+        path.append(name[i:].lower())
+        return path
 
     def args(self):
-        args = [self.path()]
+        args = self.path()
         for name, command_argument in self.__class__.__dict__.items():
             if not isinstance(command_argument, CommandArgument):
                 continue

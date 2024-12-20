@@ -32,21 +32,42 @@ result2 = my_module()  # invoke module
 ### Command
 
 ```python
-from okmodule import Option, Flag, Command
+from okmodule import Argument, Option, Flag, Command
 
 
-class Blastn(Command):
-    query = Option('-query')
-    db = Option('-db')
-    outfmt = Option('-outfmt')
-    num_threads = Option('-num_threads')
-    out = Option('-out')
-    help = Flag('-help')
+# command
+class Fastqc(Command):
+    outdir = Option('--outdir')
+    threads = Option('--threads')
+    extract = Flag('--extract')
+    seqfile = Argument()
+    
 
-# show help message
-Blastn(help=True)()
+# sub command
+class SamtoolsView(Command):
+    bam = Flag('-b')
+    min_mq = Option('-q')
+    threads = Option('-@')
+    output = Option('-o')
+    input = Argument()
 
-# invoke blastn
-blastn = Blastn(query='test/query.fa', db='test/db/test', outfmt=6, num_threads=6, out='test/result.txt')
-blastn()
+
+# invoke fastqc
+fastqc = Fastqc(
+    outdir='xxx',
+    threads=4,
+    extract=True,
+    seqfile='xxx',
+)
+fastqc()
+
+# invoke samtools view
+samtools_view = SamtoolsView(
+    bam=True,
+    min_mq=60,
+    threads=4,
+    output='xxx',
+    input='xxx'
+)
+samtools_view()
 ```
